@@ -15,6 +15,11 @@ namespace RayTracer{
         const string WHITE_SPACE = "\t\v\f\n ";
         const string QUOT = "'\"";
 
+
+        struct EOFException
+        { string msg;};
+
+
         inline bool is_char_in_str(char ch, const string& str)
         {
             for(const auto iter : str)
@@ -23,10 +28,24 @@ namespace RayTracer{
             return false;
         }
 
-        inline char peek(str_const_iter_t iter)
+        inline void walk_until_any(str_const_iter_t& iter, const string& str)
         {
-            return *(iter+1);
+            do{
+                if( is_char_in_str(*iter, str) )
+                    break;
+            } while( *(++iter) );
         }
+
+        inline void walk_until_any(str_const_iter_t& iter, const char ch)
+        {
+            do{
+                if(*iter == ch)
+                    break;
+            } while( *(++iter) );
+        }
+
+        inline char peek(str_const_iter_t iter)
+        { return *(iter+1); }
 
         inline void skip_whitespace(str_const_iter_t& iter)
         {

@@ -1,11 +1,12 @@
 #include "unittest.hpp"
 #include "parser.hpp"
+#include "xmlparser.hpp"
 
 using namespace RayTracer::Parser;
 
 TEST_CASE(TestParserBasicFunctions)
 {
-    string str = "ab cdef\nswef\t  \f \v\n 3";
+    string str = "ab cdef\nswef\t  \f \v\n 3567= 29";
     str_const_iter_t iter = str.begin() + 2;
 
     EXPECT_TRUE(is_char_in_str('a', str));
@@ -30,11 +31,23 @@ TEST_CASE(TestParserBasicFunctions)
     EXPECT_EQ(*iter, '\t');
     skip_whitespace(iter);
     EXPECT_EQ(*iter, '3');
-    skip_word(iter, "3");
-    EXPECT_EQ(*iter, 0);
 
-    skip_whitespace(iter);
+    walk_until_any(iter, " \t=");
+    EXPECT_EQ(*iter, '=');
+    walk_until_any(iter, " ");
+    EXPECT_EQ(*iter, ' ');
+
+    walk_until_any(iter, '9');
+    EXPECT_EQ(*iter, '9');
+
+    walk_until_any(iter, "8");
     EXPECT_EQ(*iter, 0);
     skip_word(iter, "001");
     EXPECT_EQ(*iter, 0);
+}
+
+TEST_CASE(TestXmlParser)
+{
+    // XmlParser a;
+    // TEST_PRINT(a.content);
 }
