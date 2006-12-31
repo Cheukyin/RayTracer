@@ -12,12 +12,14 @@ namespace RayTracer{
         const char LEFT_ANGLE = '<';
         const char RIGHT_ANGLE = '>';
         const char EQUAL = '=';
+        const char SLASH = '/';
         const string WHITE_SPACE = "\t\v\f\n ";
         const string QUOT = "'\"";
 
 
-        struct EOFException
-        { string msg;};
+        struct EOFException{};
+        struct ErrorException
+        { string msg; };
 
 
         inline bool is_char_in_str(char ch, const string& str)

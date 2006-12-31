@@ -1,6 +1,7 @@
 #include "unittest.hpp"
 #include "parser.hpp"
-#include "xmlparser.hpp"
+// #include "xmlparser.hpp"
+#include "ast.hpp"
 
 using namespace RayTracer::Parser;
 
@@ -46,8 +47,39 @@ TEST_CASE(TestParserBasicFunctions)
     EXPECT_EQ(*iter, 0);
 }
 
-TEST_CASE(TestXmlParser)
+TEST_CASE(TestNodeCoercion)
 {
-    // XmlParser a;
-    // TEST_PRINT(a.content);
+    TextNode *tnp = new TextNode;
+    tnp->text = "text";
+
+    EleNode *enp = new EleNode;
+    enp->tag_name = "enp";
+    enp->attr_kv["k"] = "v";
+    enp->subnodes.push_back( reinterpret_cast<Node*>(tnp) );
+
+    Node *np = reinterpret_cast<Node*>(tnp);
+    EXPECT_EQ(reinterpret_cast<TextNode*>(np)->text, "text");
+
+    np = reinterpret_cast<Node*>(enp);
+    EXPECT_EQ(reinterpret_cast<EleNode*>(np)->tag_name, "enp");
+    EXPECT_EQ(reinterpret_cast<EleNode*>(np)->attr_kv["k"], "v");
+
+    np = reinterpret_cast<EleNode*>(np)->subnodes[0];
+    EXPECT_EQ(reinterpret_cast<TextNode*>(np)->text, "text");
 }
+
+// TEST_CASE(TestXmlParser)
+// {
+//     // XmlParser a;
+//     // TEST_PRINT(a.content);
+// }
+
+
+
+
+
+
+
+
+
+

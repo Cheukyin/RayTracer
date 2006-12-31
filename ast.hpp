@@ -14,20 +14,32 @@ namespace RayTracer{
         using std::map;
         using std::shared_ptr;
 
+        enum class NodeType
+        {ELE, TEXT};
+
         struct Node
-        {
-        };
+        { NodeType type; };
 
-        struct TextNode: public Node
+        struct TextNode
         {
+            NodeType type;
             string text;
+
+            TextNode()
+            : type(NodeType::TEXT)
+            {}
         };
 
-        struct EleNode: public Node
+        struct EleNode
         {
+            NodeType type;
             string tag_name;
             map<string, string> attr_kv;
-            vector< shared_ptr<Node> > text;
+            vector<Node*> subnodes;
+
+            EleNode()
+            : type(NodeType::ELE)
+            {}
         };
 
     } // namespace Parser
