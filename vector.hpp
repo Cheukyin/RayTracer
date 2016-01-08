@@ -96,20 +96,21 @@ namespace RayTracer{
         };
 
 
+        //scale
         template<class T>
-        Vector3d<T> operator*(T scalar, const Vector3d<T>& vec)
+        inline Vector3d<T> operator*(T scalar, const Vector3d<T>& vec)
         {
             Vector3d<T> new_v(vec);
             new_v.scale(scalar);
             return new_v;
         }
         template<class T>
-        Vector3d<T> operator*(const Vector3d<T>& vec, T scalar)
+        inline Vector3d<T> operator*(const Vector3d<T>& vec, T scalar)
         { return scalar * vec; }
 
 
         template<class T>
-        bool is_null(const Vector3d<T>& vec)
+        inline bool is_null(const Vector3d<T>& vec)
         {
             return is_double_zero(vec[0])
                 && is_double_zero(vec[1])
@@ -118,12 +119,17 @@ namespace RayTracer{
 
 
         template<class T>
-        bool is_perpendicular(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        inline bool is_perpendicular(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
         { return is_double_zero( vec1.dot(vec2) ); }
 
 
         template<class T>
-        Vector3d<T> operator+(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        inline bool is_colline(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        { return is_double_zero( vec1.dot(vec2) ); }
+
+
+        template<class T>
+        inline Vector3d<T> operator+(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
         {
             Vector3d<T> new_v(vec1);
             new_v.add(vec2);
@@ -132,7 +138,7 @@ namespace RayTracer{
 
 
         template<class T>
-        Vector3d<T> operator-(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        inline Vector3d<T> operator-(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
         {
             Vector3d<T> new_v(vec1);
             new_v.sub(vec2);
@@ -140,8 +146,9 @@ namespace RayTracer{
         }
 
 
+        // cross
         template<class T>
-        Vector3d<T> operator*(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        inline Vector3d<T> operator*(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
         {
             Vector3d<T> new_v;
             new_v[0] = vec1[1]*vec2[2] - vec1[2]*vec2[1];
@@ -152,19 +159,24 @@ namespace RayTracer{
 
 
         template<class T>
-        bool operator==(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        inline T dot(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        { return vec1[0]*vec2[0] + vec1[1]*vec2[1] + vec1[2]*vec2[2]; }
+
+
+        template<class T>
+        inline bool operator==(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
         {
             return is_double_eq(vec1[0], vec2[0]) \
                 && is_double_eq(vec1[1], vec2[1]) \
                 && is_double_eq(vec1[2], vec2[2]);
         }
         template<class T>
-        bool operator!=(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        inline bool operator!=(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
         { return !(vec1 == vec2); }
 
 
         template<class T>
-        Vector3d<T> normalize(const Vector3d<T>& vec)
+        inline Vector3d<T> normalize(const Vector3d<T>& vec)
         {
             Vector3d<T> new_v(vec);
             double dist = new_v.length();
@@ -179,7 +191,7 @@ namespace RayTracer{
 
 
         template<class T>
-        std::ostream& operator<<(std::ostream &os, const Vector3d<T>& vec)
+        inline std::ostream& operator<<(std::ostream &os, const Vector3d<T>& vec)
         { return os << "(" << vec[0] << ", " << vec[1] << ", " << vec[2] << ")"; }
 
     } // namespace Math

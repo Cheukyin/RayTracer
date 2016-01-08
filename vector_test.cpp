@@ -60,6 +60,7 @@ TEST_CASE(TestVectorDot)
     Vec3d v1(2.3, 2.1, 0.3);
 
     EXPECT_DOUBLE_EQ(v0.dot(v1), 8.69);
+    EXPECT_DOUBLE_EQ(dot(v0, v1), 8.69);
 }
 
 TEST_CASE(TestVectorIsNull)
