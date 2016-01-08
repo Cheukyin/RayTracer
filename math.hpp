@@ -17,13 +17,3 @@ namespace RayTracer{
 } // namespace RayTracer
 
 #endif // CHEUKYIN_RAYTRACER_MATH_H
-
-
-
-
-
-
-
-
-
-
