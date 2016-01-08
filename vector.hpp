@@ -93,7 +93,8 @@ namespace RayTracer{
 
         private:
             T v[3]; // x, y , z
-        };
+
+        }; // class vector
 
 
         //scale
@@ -119,13 +120,28 @@ namespace RayTracer{
 
 
         template<class T>
+        inline double cos_theta(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        { return vec1.dot(vec2) / ( vec1.length() * vec2.length() ); }
+
+
+        // radian in [0, pi]
+        template<class T>
+        inline double theta(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        { return acos( cos_theta(vec1, vec2) ); }
+
+
+        template<class T>
         inline bool is_perpendicular(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
         { return is_double_zero( vec1.dot(vec2) ); }
 
 
         template<class T>
         inline bool is_colline(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
-        { return is_double_zero( vec1.dot(vec2) ); }
+        {
+            double costheta = cos_theta(vec1, vec2);
+            return is_double_eq(costheta, 1)
+                || is_double_eq(costheta, -1);
+        }
 
 
         template<class T>
@@ -159,7 +175,7 @@ namespace RayTracer{
 
 
         template<class T>
-        inline T dot(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
+        inline double dot(const Vector3d<T>& vec1, const Vector3d<T>& vec2)
         { return vec1[0]*vec2[0] + vec1[1]*vec2[1] + vec1[2]*vec2[2]; }
 
 

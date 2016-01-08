@@ -1,7 +1,8 @@
 #include "unittest.hpp"
 #include "vector.hpp"
 
-typedef RayTracer::Math::Vector3d<double> Vec3d;
+using namespace RayTracer;
+typedef Math::Vector3d<double> Vec3d;
 
 TEST_CASE(TestVectorEquality)
 {
@@ -72,6 +73,26 @@ TEST_CASE(TestVectorIsNull)
     EXPECT_TRUE( is_null(v1) );
 }
 
+TEST_CASE(TestVectorCosTheta)
+{
+    Vec3d v0(1, 1, 0);
+    Vec3d v1(1, 0, 0);
+    Vec3d v2(-1, 0, 0);
+
+    EXPECT_DOUBLE_EQ(cos_theta(v0, v1), 0.707106);
+    EXPECT_DOUBLE_EQ(cos_theta(v1, v2), -1);
+}
+
+TEST_CASE(TestVectorTheta)
+{
+    Vec3d v0(1, 1, 0);
+    Vec3d v1(1, 0, 0);
+    Vec3d v2(-1, 0, 0);
+
+    EXPECT_DOUBLE_EQ(theta(v0, v1), Math::PI/4);
+    EXPECT_DOUBLE_EQ(theta(v1, v2), Math::PI);
+}
+
 TEST_CASE(TestVectorIsPerpendicular)
 {
     Vec3d v0(1, 3, 0);
@@ -80,6 +101,16 @@ TEST_CASE(TestVectorIsPerpendicular)
 
     EXPECT_TRUE( is_perpendicular(v0, v1) );
     EXPECT_FALSE( is_perpendicular(v0, v2) );
+}
+
+TEST_CASE(TestVectorIsColline)
+{
+    Vec3d v0(1, 3, 1.2);
+    Vec3d v1(2, 6, 2.4);
+    Vec3d v2(0, 0, 0.3);
+
+    EXPECT_TRUE( is_colline(v0, v1) );
+    EXPECT_FALSE( is_colline(v0, v2) );
 }
 
 TEST_CASE(TestVectorCross)
@@ -112,6 +143,6 @@ TEST_CASE(TestVectorNormalize)
     Vec3d r = normalize(v);
 
     EXPECT_DOUBLE_EQ(r.length(), 1);
-    EXPECT_DOUBLE_EQ(r.dot(v) / v.length(), 1);
+    EXPECT_DOUBLE_EQ(cos_theta(v, r), 1);
     EXPECT_EQ(v.normalize(), r);
 }
