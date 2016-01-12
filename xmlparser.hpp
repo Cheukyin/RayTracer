@@ -61,7 +61,7 @@ namespace RayTracer{
                         walk_until_any(content_iter, LEFT_ANGLE);
                         if( !*content_iter )
                             throw EOFException();
-                        root->subnodes.push_back( parse_node(new EleNode) );
+                        root->subnodes.push_back( parse_node() );
                     }
                 }
                 catch(EOFException e)
@@ -91,7 +91,7 @@ namespace RayTracer{
             // <SELF_CLOSED_NODE_LEFT> -> <SLASH> <RIGHT_ANGLE>
             // <NORMAL_NODE_LEFT> -> <RIGHT_ANGLE> <NODE>* <CLOSED_TAG>
 
-            Node* parse_node(EleNode* ele_node)
+            Node* parse_node()
             {
                 // parse text node
                 if(*content_iter != LEFT_ANGLE)
@@ -116,11 +116,12 @@ namespace RayTracer{
                 content_iter++;
                 skip_whitespace(content_iter);
                 if( !*content_iter )
-                    throw EOFException();
+                    throw ErrorException{"EOF occurs when parsing start tag!"};
                 if(*content_iter == SLASH)
                     throw ErrorException{"SLASH occurs when parsing start tag!"};
 
                 // parse tag_name
+                EleNode *ele_node = new EleNode;
                 auto start_iter = content_iter;
                 walk_until_any(content_iter, WHITE_SPACE+RIGHT_ANGLE+SLASH);
                 ele_node->tag_name = string(start_iter, content_iter);
@@ -163,7 +164,7 @@ namespace RayTracer{
                     // parse text node
                     if(*content_iter != LEFT_ANGLE)
                     {
-                        ele_node->subnodes.push_back( parse_node(new EleNode) );
+                        ele_node->subnodes.push_back( parse_node() );
                         continue;
                     }
 
@@ -179,7 +180,7 @@ namespace RayTracer{
 
                     // it's a start tag
                     content_iter = iter; // recover content_iter, back to LEFT_ANGLE
-                    ele_node->subnodes.push_back( parse_node(new EleNode) );
+                    ele_node->subnodes.push_back( parse_node() );
                 }
 
                 // parse closed tag

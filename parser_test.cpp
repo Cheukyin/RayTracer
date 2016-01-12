@@ -66,6 +66,8 @@ TEST_CASE(TestNodeCoercion)
 
     np = reinterpret_cast<EleNode*>(np)->subnodes[0];
     EXPECT_EQ(reinterpret_cast<TextNode*>(np)->text, "text");
+
+    free_node( reinterpret_cast<Node*>(enp) );
 }
 
 TEST_CASE(TestXmlParser)
@@ -75,18 +77,20 @@ TEST_CASE(TestXmlParser)
     XmlParser p;
 
     // ----------------------------------------------------------------
-    p.set_content(R"(   < surface >  <  / surface  >  )");
+    p.set_content(R"(<surface></surface>)");
     root = (EleNode*)p.parse();
 
-    EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name,
-              "surface");
+    EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name, "surface");
+
+    free_node( reinterpret_cast<Node*>(root) );
 
     // ----------------------------------------------------------------
     p.set_content(R"(   < shader /  >  )");
     root = reinterpret_cast<EleNode*>( p.parse() );
 
-    EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name,
-              "shader");
+    EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name, "shader");
+
+    free_node( reinterpret_cast<Node*>(root) );
 
     // ----------------------------------------------------------------
     p.set_content(R"(   < surface  k1="v1"  k2 =   'v2' >
@@ -128,6 +132,8 @@ TEST_CASE(TestXmlParser)
     EXPECT_EQ(n5->text, "in");
 
     EXPECT_EQ(reinterpret_cast<EleNode*>(n2->subnodes[4])->tag_name, "db");
+
+    free_node( reinterpret_cast<Node*>(root) );
 
     // ----------------------------------------------------------------
 }

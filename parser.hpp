@@ -32,6 +32,8 @@ namespace RayTracer{
 
         inline void walk_until_any(str_const_iter_t& iter, const string& str)
         {
+            if( !*iter )
+                return;
             do{
                 if( is_char_in_str(*iter, str) )
                     break;
@@ -40,6 +42,8 @@ namespace RayTracer{
 
         inline void walk_until_any(str_const_iter_t& iter, const char ch)
         {
+            if( !*iter )
+                return;
             do{
                 if(*iter == ch)
                     break;
