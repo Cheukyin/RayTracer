@@ -1,6 +1,6 @@
 #include "unittest.hpp"
 #include "parser.hpp"
-// #include "xmlparser.hpp"
+#include "xmlparser.hpp"
 #include "ast.hpp"
 
 using namespace RayTracer::Parser;
@@ -68,18 +68,66 @@ TEST_CASE(TestNodeCoercion)
     EXPECT_EQ(reinterpret_cast<TextNode*>(np)->text, "text");
 }
 
-// TEST_CASE(TestXmlParser)
-// {
-//     // XmlParser a;
-//     // TEST_PRINT(a.content);
-// }
+TEST_CASE(TestXmlParser)
+{
+    EleNode *root = new EleNode;
 
+    XmlParser p;
 
+    // ----------------------------------------------------------------
+    p.set_content(R"(   < surface >  <  / surface  >  )");
+    root->subnodes = p.parse();
 
+    EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name,
+              "surface");
 
+    // ----------------------------------------------------------------
+    p.set_content(R"(   < shader /  >  )");
+    root->subnodes = p.parse();
 
+    EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name,
+              "shader");
 
+    // ----------------------------------------------------------------
+    p.set_content(R"(   < surface  k1="v1"  k2 =   'v2' >
 
+                          < shader >
+                          < /shader >
+                            <radius >
+                              <abc k4="v4" k5 ="v5"> <alpha> < / alpha > qie <ab  k3  =   'y2'  /> in <db > </db> < / abc>
+                                <dbc> </ dbc>
+                            </radius>
 
+                          <  center > < / center >
+                        <  / surface  >  )");
+    root->subnodes = p.parse();
 
+    EleNode *n0 = reinterpret_cast<EleNode*>(root->subnodes[0]); // <surface>...</surface>
+    EXPECT_EQ(n0->attr_kv["k1"], "v1");
+    EXPECT_EQ(n0->attr_kv["k2"], "v2");
+    EXPECT_EQ(reinterpret_cast<EleNode*>(n0->subnodes[0])->tag_name, "shader");
+    EXPECT_EQ(reinterpret_cast<EleNode*>(n0->subnodes[1])->tag_name, "radius");
+    EXPECT_EQ(reinterpret_cast<EleNode*>(n0->subnodes[2])->tag_name, "center");
 
+    EleNode *n1 = reinterpret_cast<EleNode*>(n0->subnodes[1]); // <radius>...</radius>
+    EXPECT_EQ(reinterpret_cast<EleNode*>(n1->subnodes[0])->tag_name, "abc");
+    EXPECT_EQ(reinterpret_cast<EleNode*>(n1->subnodes[1])->tag_name, "dbc");
+
+    EleNode *n2 = reinterpret_cast<EleNode*>(n1->subnodes[0]); // <abc>...</abc>
+    EXPECT_EQ(n2->attr_kv["k4"], "v4");
+    EXPECT_EQ(n2->attr_kv["k5"], "v5");
+    EXPECT_EQ(reinterpret_cast<EleNode*>(n2->subnodes[0])->tag_name, "alpha");
+
+    TextNode *n3 = reinterpret_cast<TextNode*>(n2->subnodes[1]); // qie
+    EXPECT_EQ(n3->text, "qie");
+
+    EXPECT_EQ(reinterpret_cast<EleNode*>(n2->subnodes[2])->tag_name, "ab");
+    EXPECT_EQ(reinterpret_cast<EleNode*>(n2->subnodes[2])->attr_kv["k3"], "y2");
+
+    TextNode *n5 = reinterpret_cast<TextNode*>(n2->subnodes[3]); // in
+    EXPECT_EQ(n5->text, "in");
+
+    EXPECT_EQ(reinterpret_cast<EleNode*>(n2->subnodes[4])->tag_name, "db");
+
+    // ----------------------------------------------------------------
+}

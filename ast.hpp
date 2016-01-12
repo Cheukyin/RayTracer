@@ -2,7 +2,6 @@
 #define CHEUKYIN_RAYTRACER_AST_H
 
 #include <map>
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,7 +11,6 @@ namespace RayTracer{
         using std::string;
         using std::vector;
         using std::map;
-        using std::shared_ptr;
 
         enum class NodeType
         {ELE, TEXT};
