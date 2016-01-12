@@ -50,9 +50,9 @@ namespace RayTracer{
             }
 
             // <S> -> <NODE>*
-            vector<Node*> parse()
+            Node* parse()
             {
-                vector<Node*> vec_node;
+                EleNode *root = new EleNode;
                 try
                 {
                     while(1)
@@ -61,11 +61,11 @@ namespace RayTracer{
                         walk_until_any(content_iter, LEFT_ANGLE);
                         if( !*content_iter )
                             throw EOFException();
-                        vec_node.push_back( parse_node(new EleNode) );
+                        root->subnodes.push_back( parse_node(new EleNode) );
                     }
                 }
                 catch(EOFException e)
-                { return vec_node; }
+                { return reinterpret_cast<Node*>(root); }
                 catch(ErrorException e)
                 {
                     std::cerr << e.msg << std::endl;

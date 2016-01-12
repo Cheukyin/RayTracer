@@ -70,20 +70,20 @@ TEST_CASE(TestNodeCoercion)
 
 TEST_CASE(TestXmlParser)
 {
-    EleNode *root = new EleNode;
+    EleNode *root;
 
     XmlParser p;
 
     // ----------------------------------------------------------------
     p.set_content(R"(   < surface >  <  / surface  >  )");
-    root->subnodes = p.parse();
+    root = (EleNode*)p.parse();
 
     EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name,
               "surface");
 
     // ----------------------------------------------------------------
     p.set_content(R"(   < shader /  >  )");
-    root->subnodes = p.parse();
+    root = reinterpret_cast<EleNode*>( p.parse() );
 
     EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name,
               "shader");
@@ -100,7 +100,7 @@ TEST_CASE(TestXmlParser)
 
                           <  center > < / center >
                         <  / surface  >  )");
-    root->subnodes = p.parse();
+    root = reinterpret_cast<EleNode*>( p.parse() );
 
     EleNode *n0 = reinterpret_cast<EleNode*>(root->subnodes[0]); // <surface>...</surface>
     EXPECT_EQ(n0->attr_kv["k1"], "v1");
