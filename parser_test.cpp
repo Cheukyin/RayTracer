@@ -55,24 +55,28 @@ TEST_CASE(TestNodeCoercion)
     EleNode *enp = new EleNode;
     enp->tag_name = "enp";
     enp->attr_kv["k"] = "v";
-    enp->subnodes.push_back( reinterpret_cast<Node*>(tnp) );
+    enp->subnodes.push_back(tnp);
 
-    Node *np = reinterpret_cast<Node*>(tnp);
-    EXPECT_EQ(reinterpret_cast<TextNode*>(np)->text, "text");
+    Node *np = tnp;
+    EXPECT_EQ(dynamic_cast<TextNode*>(np)->text, "text");
 
-    np = reinterpret_cast<Node*>(enp);
-    EXPECT_EQ(reinterpret_cast<EleNode*>(np)->tag_name, "enp");
-    EXPECT_EQ(reinterpret_cast<EleNode*>(np)->attr_kv["k"], "v");
+    EXPECT_TRUE(dynamic_cast<EleNode*>(np) == nullptr);
 
-    np = reinterpret_cast<EleNode*>(np)->subnodes[0];
-    EXPECT_EQ(reinterpret_cast<TextNode*>(np)->text, "text");
+    np = enp;
+    EXPECT_EQ(dynamic_cast<EleNode*>(np)->tag_name, "enp");
+    EXPECT_EQ(dynamic_cast<EleNode*>(np)->attr_kv["k"], "v");
 
-    free_node( reinterpret_cast<Node*>(enp) );
+    EXPECT_TRUE(dynamic_cast<TextNode*>(np) == nullptr);
+
+    np = dynamic_cast<EleNode*>(np)->subnodes[0];
+    EXPECT_EQ(dynamic_cast<TextNode*>(np)->text, "text");
+
+    EXPECT_TRUE(dynamic_cast<EleNode*>(np) == nullptr);
 }
 
 TEST_CASE(TestXmlParser)
 {
-    EleNode *root;
+    Node *root;
 
     XmlParser p;
 
@@ -80,17 +84,15 @@ TEST_CASE(TestXmlParser)
     p.set_content(R"(<surface></surface>)");
     root = (EleNode*)p.parse();
 
-    EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name, "surface");
-
-    free_node( reinterpret_cast<Node*>(root) );
+    EXPECT_EQ(dynamic_cast<EleNode*>(dynamic_cast<EleNode*>(root)->subnodes[0])->tag_name, 
+              "surface");
 
     // ----------------------------------------------------------------
     p.set_content(R"(   < shader /  >  )");
-    root = reinterpret_cast<EleNode*>( p.parse() );
+    root = dynamic_cast<EleNode*>( p.parse() );
 
-    EXPECT_EQ(reinterpret_cast<EleNode*>(root->subnodes[0])->tag_name, "shader");
-
-    free_node( reinterpret_cast<Node*>(root) );
+    EXPECT_EQ(dynamic_cast<EleNode*>(dynamic_cast<EleNode*>(root)->subnodes[0])->tag_name, 
+              "shader");
 
     // ----------------------------------------------------------------
     p.set_content(R"(   < surface  k1="v1"  k2 =   'v2' >
@@ -104,36 +106,35 @@ TEST_CASE(TestXmlParser)
 
                           <  center > < / center >
                         <  / surface  >  )");
-    root = reinterpret_cast<EleNode*>( p.parse() );
+    root = p.parse();
 
-    EleNode *n0 = reinterpret_cast<EleNode*>(root->subnodes[0]); // <surface>...</surface>
+    EleNode *n0 = dynamic_cast<EleNode*>(dynamic_cast<EleNode*>(root)->subnodes[0]); // <surface>...</surface>
     EXPECT_EQ(n0->attr_kv["k1"], "v1");
     EXPECT_EQ(n0->attr_kv["k2"], "v2");
-    EXPECT_EQ(reinterpret_cast<EleNode*>(n0->subnodes[0])->tag_name, "shader");
-    EXPECT_EQ(reinterpret_cast<EleNode*>(n0->subnodes[1])->tag_name, "radius");
-    EXPECT_EQ(reinterpret_cast<EleNode*>(n0->subnodes[2])->tag_name, "center");
+    EXPECT_EQ(dynamic_cast<EleNode*>(n0->subnodes[0])->tag_name, "shader");
+    EXPECT_EQ(dynamic_cast<EleNode*>(n0->subnodes[1])->tag_name, "radius");
+    EXPECT_EQ(dynamic_cast<EleNode*>(n0->subnodes[2])->tag_name, "center");
 
-    EleNode *n1 = reinterpret_cast<EleNode*>(n0->subnodes[1]); // <radius>...</radius>
-    EXPECT_EQ(reinterpret_cast<EleNode*>(n1->subnodes[0])->tag_name, "abc");
-    EXPECT_EQ(reinterpret_cast<EleNode*>(n1->subnodes[1])->tag_name, "dbc");
+    EleNode *n1 = dynamic_cast<EleNode*>(n0->subnodes[1]); // <radius>...</radius>
+    EXPECT_EQ(dynamic_cast<EleNode*>(n1->subnodes[0])->tag_name, "abc");
+    EXPECT_EQ(dynamic_cast<EleNode*>(n1->subnodes[1])->tag_name, "dbc");
 
-    EleNode *n2 = reinterpret_cast<EleNode*>(n1->subnodes[0]); // <abc>...</abc>
+    EleNode *n2 = dynamic_cast<EleNode*>(n1->subnodes[0]); // <abc>...</abc>
     EXPECT_EQ(n2->attr_kv["k4"], "v4");
     EXPECT_EQ(n2->attr_kv["k5"], "v5");
-    EXPECT_EQ(reinterpret_cast<EleNode*>(n2->subnodes[0])->tag_name, "alpha");
+    EXPECT_EQ(dynamic_cast<EleNode*>(n2->subnodes[0])->tag_name, "alpha");
 
-    TextNode *n3 = reinterpret_cast<TextNode*>(n2->subnodes[1]); // qie
+    TextNode *n3 = dynamic_cast<TextNode*>(n2->subnodes[1]); // qie
     EXPECT_EQ(n3->text, "qie");
 
-    EXPECT_EQ(reinterpret_cast<EleNode*>(n2->subnodes[2])->tag_name, "ab");
-    EXPECT_EQ(reinterpret_cast<EleNode*>(n2->subnodes[2])->attr_kv["k3"], "y2");
+    EXPECT_TRUE(dynamic_cast<TextNode*>(n2->subnodes[2]) == nullptr);
+    EXPECT_EQ(dynamic_cast<EleNode*>(n2->subnodes[2])->tag_name, "ab");
+    EXPECT_EQ(dynamic_cast<EleNode*>(n2->subnodes[2])->attr_kv["k3"], "y2");
 
-    TextNode *n5 = reinterpret_cast<TextNode*>(n2->subnodes[3]); // in
+    TextNode *n5 = dynamic_cast<TextNode*>(n2->subnodes[3]); // in
     EXPECT_EQ(n5->text, "in");
 
-    EXPECT_EQ(reinterpret_cast<EleNode*>(n2->subnodes[4])->tag_name, "db");
-
-    free_node( reinterpret_cast<Node*>(root) );
+    EXPECT_EQ(dynamic_cast<EleNode*>(n2->subnodes[4])->tag_name, "db");
 
     // ----------------------------------------------------------------
 }

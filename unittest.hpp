@@ -2,7 +2,9 @@
 #define CHEUKYIN_RAYTRACER_UNITTEST_H
 
 #include <iostream>
+#ifdef __GNUC__
 #include <unistd.h>
+#endif
 #include <math.h>
 
 

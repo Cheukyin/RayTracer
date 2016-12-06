@@ -65,7 +65,7 @@ namespace RayTracer{
                     }
                 }
                 catch(EOFException e)
-                { return reinterpret_cast<Node*>(root); }
+                { return root; }
                 catch(ErrorException e)
                 {
                     std::cerr << e.msg << std::endl;
@@ -107,7 +107,7 @@ namespace RayTracer{
                     tn->text = string(start_iter, content_iter);
                     skip_whitespace(content_iter);
 
-                    return reinterpret_cast<Node*>(tn);
+                    return tn;
                 }
 
                 // parse element node
@@ -146,7 +146,7 @@ namespace RayTracer{
                 // self closed tag
                 if(*content_iter == SLASH)
                     parse_self_closed_node_left();
-                return reinterpret_cast<Node*>(ele_node);
+                return ele_node;
             }
 
             // <NORMAL_NODE_LEFT> -> <RIGHT_ANGLE> <NODE>* <CLOSED_TAG>
@@ -200,7 +200,7 @@ namespace RayTracer{
 
                 assert(*content_iter == RIGHT_ANGLE);
                 content_iter++;
-                return reinterpret_cast<Node*>(ele_node);
+                return ele_node;
             }
 
             // <SELF_CLOSED_NODE_LEFT> -> <SLASH> <RIGHT_ANGLE>
