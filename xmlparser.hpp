@@ -175,7 +175,7 @@ namespace RayTracer{
                     // check if < is followed by /
                     if(*content_iter == SLASH) // it's a closed tag
                         break;
-                    if( !*content_iter )
+                    if(!*content_iter)
                         throw ErrorException{"EOF occurs when parsing inside a tag!"};
 
                     // it's a start tag
@@ -191,11 +191,10 @@ namespace RayTracer{
 
                 auto start_iter = content_iter;
                 walk_until_any(content_iter, WHITE_SPACE+RIGHT_ANGLE);
-                string str(start_iter, content_iter);
-                if(tag_stack.top() == str)
+                if( tag_stack.top() == string(start_iter, content_iter) )
                     tag_stack.pop();
                 else
-                    throw ErrorException{"Name of end tag doesn't match!"};
+                    throw ErrorException{"End tag doesn't match " + tag_stack.top() + "!"};
                 skip_whitespace(content_iter);
 
                 assert(*content_iter == RIGHT_ANGLE);
@@ -238,10 +237,9 @@ namespace RayTracer{
                 // parse value
                 start_iter = ++content_iter;
                 walk_until_any(content_iter, QUOT);
-                string val(start_iter, content_iter);
 
                 // store it
-                attr_kv[key] = val;
+                attr_kv[key] = string(start_iter, content_iter);
 
                 content_iter++;
             }

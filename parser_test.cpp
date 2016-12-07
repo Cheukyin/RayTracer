@@ -72,6 +72,8 @@ TEST_CASE(TestNodeCoercion)
     EXPECT_EQ(dynamic_cast<TextNode*>(np)->text, "text");
 
     EXPECT_TRUE(dynamic_cast<EleNode*>(np) == nullptr);
+
+    delete np;
 }
 
 TEST_CASE(TestXmlParser)
@@ -93,6 +95,8 @@ TEST_CASE(TestXmlParser)
 
     EXPECT_EQ(dynamic_cast<EleNode*>(dynamic_cast<EleNode*>(root)->subnodes[0])->tag_name, 
               "shader");
+
+    delete root;
 
     // ----------------------------------------------------------------
     p.set_content(R"(   < surface  k1="v1"  k2 =   'v2' >
@@ -136,5 +140,6 @@ TEST_CASE(TestXmlParser)
 
     EXPECT_EQ(dynamic_cast<EleNode*>(n2->subnodes[4])->tag_name, "db");
 
+    delete root;
     // ----------------------------------------------------------------
 }
