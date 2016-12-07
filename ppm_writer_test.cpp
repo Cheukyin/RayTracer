@@ -26,5 +26,5 @@ TEST_CASE(TestPPMWriter)
         }
     }
 
-    ppm.write("rgb3by3.ppm");
+    ppm.write("rgb.ppm");
 }

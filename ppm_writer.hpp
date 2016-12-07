@@ -56,7 +56,7 @@ namespace RayTracer{
             {
                 for(int h = 0; h < height; h++)
                     delete[] matrix[h];
-                //delete[] matrix;
+                delete[] matrix;
             }
 
         private:
