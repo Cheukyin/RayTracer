@@ -9,13 +9,21 @@ TEST_CASE(TestPPMWriter)
     const RGB g{ 0, 255, 0 };
     const RGB b{ 0, 0, 255 };
 
-    PPMWriter<3, 3, 255> ppm;
+    const int Width = 1000;
+    const int Height = 900;
+    const int MaxVal = 255;
+    PPMWriter ppm(Height, Width, MaxVal);
 
-    for(int i = 0; i < 3; i++)
+    int step = Width / 3;
+    for(int h = 0; h < Height; h++)
     {
-        ppm[i][0] = r;
-        ppm[i][1] = g;
-        ppm[i][2] = b;
+        for(int w = 0; w < Width; w++)
+        {
+            int part = w / step;
+            if(part == 0)      ppm[h][w] = r;
+            else if(part == 1) ppm[h][w] = g;
+            else               ppm[h][w] = b;
+        }
     }
 
     ppm.write("rgb3by3.ppm");

@@ -16,12 +16,19 @@ namespace RayTracer{
             return os;
         }
 
-        template<int Width, int Height, int MaxVal = 255>
         class PPMWriter
         {
         public:
-            PPMWriter() 
-            { memset(matrix, 0, sizeof(matrix)); }
+            PPMWriter(int height, int width, int maxVal = 255)
+                : height(height), width(width), maxVal(maxVal)
+            { 
+                matrix = new RGB*[height];
+                for (int h = 0; h < height; h++)
+                {
+                    matrix[h] = new RGB[width];
+                    memset(matrix[h], 0, width * sizeof(matrix[h][0]));
+                }
+            }
 
             RGB* operator[](int h)
             { return matrix[h]; }
@@ -32,12 +39,12 @@ namespace RayTracer{
                 outf.open(filepath);
 
                 outf << "P3" << std::endl;
-                outf << Width << " " << Height << std::endl;
-                outf << MaxVal << std::endl;
+                outf << width << " " << height << std::endl;
+                outf << maxVal << std::endl;
 
-                for(int i = 0; i < Height; i++)
+                for(int i = 0; i < height; i++)
                 {
-                    for(int j = 0; j < Width; j++)
+                    for(int j = 0; j < width; j++)
                         outf << matrix[i][j] << " ";
                     outf << std::endl;
                 }
@@ -45,8 +52,18 @@ namespace RayTracer{
                 outf.close();
             }
 
+            ~PPMWriter()
+            {
+                for(int h = 0; h < height; h++)
+                    delete[] matrix[h];
+                //delete[] matrix;
+            }
+
         private:
-            RGB matrix[Height][Width];
+            int height;
+            int width;
+            int maxVal;
+            RGB **matrix;
 
         }; // class PPMWriter
 
